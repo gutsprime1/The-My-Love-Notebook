@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The My Love Notebook</title>
+
+<style>
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    width:100vw;
+    height:100vh;
+    overflow:hidden;
+    background:#e3d0bb;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-family:Georgia,"Times New Roman",serif;
+}
+
+.book{
+    width:52vw;
+    height:69vw;
+    max-width:220px;
+    max-height:290px;
+    position:relative;
+}
+
+/* ЖАБЫҚ КІТАП */
+
+.closed-book{
+    position:absolute;
+    inset:0;
+    z-index:10;
+
+    background:
+    linear-gradient(
+        90deg,
+        rgba(255,255,255,.08),
+        transparent 18%,
+        transparent 82%,
+        rgba(0,0,0,.15)
+    ),
+    #805236;
+
+    border:5px solid #68432e;
+    border-radius:8px;
+
+    display:flex;
+    justify-content:center;
+    align-items:center;
+
+    color:#f8e9d8;
+    text-align:center;
+
+    transition:.45s;
+}
+
+.closed-title{
+    font-size:clamp(17px,5vw,25px);
+    line-height:1.3;
+}
+
+.heart{
+    font-size:clamp(27px,8vw,40px);
+    margin-bottom:12px;
+}
+
+/* АШЫҚ КІТАП */
+
+.open-book{
+    position:absolute;
+
+    width:200%;
+    height:100%;
+
+    left:-50%;
+    top:0;
+
+    padding:7px;
+
+    background:#805236;
+
+    border:5px solid #68432e;
+    border-radius:8px;
+
+    display:flex;
+
+    opacity:0;
+    visibility:hidden;
+
+    transition:.45s;
+
+    box-shadow:0 12px 25px rgba(0,0,0,.22);
+}
+
+.book.open .closed-book{
+    opacity:0;
+    visibility:hidden;
+}
+
+.book.open .open-book{
+    opacity:1;
+    visibility:visible;
+}
+
+/* ПАРАҚ */
+
+.page{
+    width:50%;
+    height:100%;
+    position:relative;
+
+    background:#fff;
+
+    overflow:hidden;
+}
+
+.left-page{
+    border-right:1px solid #ddd;
+}
+
+.open-book:after{
+    content:"";
+
+    position:absolute;
+
+    left:50%;
+    top:7px;
+    bottom:7px;
+
+    width:2px;
+
+    background:#c7b299;
+
+    z-index:20;
+}
+
+/* ТИТУЛ */
+
+.date{
+    text-align:center;
+
+    margin-top:5px;
+
+    font-size:clamp(8px,2.5vw,12px);
+    color:#75675d;
+}
+
+.center-text{
+    position:absolute;
+
+    left:8%;
+    right:8%;
+
+    top:50%;
+
+    transform:translateY(-50%);
+
+    text-align:center;
+}
+
+.book-title{
+    font-size:clamp(15px,4.5vw,23px);
+
+    color:#30251f;
+
+    line-height:1.25;
+
+    margin-bottom:13px;
+}
+
+.description{
+    font-size:clamp(8px,2.7vw,13px);
+
+    color:#66564d;
+
+    line-height:1.5;
+}
+
+.author{
+    position:absolute;
+
+    right:12px;
+    bottom:12px;
+
+    text-align:right;
+
+    color:#4b3a31;
+
+    font-size:clamp(7px,2.3vw,11px);
+
+    line-height:1.6;
+}
+
+/* МӘТІН */
+
+.paragraph{
+    position:absolute;
+
+    top:13px;
+    left:8px;
+    right:8px;
+    bottom:19px;
+
+    overflow:hidden;
+}
+
+.paragraph h3{
+    text-align:center;
+
+    font-size:clamp(8px,2.4vw,11px);
+
+    color:#3d3029;
+
+    margin-bottom:6px;
+
+    line-height:1.2;
+}
+
+.paragraph p{
+    font-size:clamp(7px,2.05vw,9px);
+
+    color:#403833;
+
+    line-height:1.28;
+
+    text-align:justify;
+
+    word-spacing:0;
+    letter-spacing:0;
+}
+
+.page-number{
+    position:absolute;
+
+    bottom:3px;
+    left:0;
+
+    width:100%;
+
+    text-align:center;
+
+    color:#8a817b;
+
+    font-size:clamp(6px,1.8vw,9px);
+}
+
+/* АНИМАЦИЯ */
+
+.flip-left{
+    animation:flipLeft .5s ease;
+}
+
+.flip-right{
+    animation:flipRight .5s ease;
+}
+
+@keyframes flipLeft{
+
+    0%{
+        transform:perspective(800px) rotateY(0);
+    }
+
+    50%{
+        transform:perspective(800px) rotateY(-10deg);
+    }
+
+    100%{
+        transform:perspective(800px) rotateY(0);
+    }
+}
+
+@keyframes flipRight{
+
+    0%{
+        transform:perspective(800px) rotateY(0);
+    }
+
+    50%{
+        transform:perspective(800px) rotateY(10deg);
+    }
+
+    100%{
+        transform:perspective(800px) rotateY(0);
+    }
+}
+
+/* КНОПКАЛАР */
+
+.buttons{
+    position:fixed;
+
+    bottom:42px;
+
+    left:50%;
+
+    transform:translateX(-50%);
+
+    display:flex;
+    gap:10px;
+
+    z-index:100;
+}
+
+button{
+    border:0;
+
+    padding:8px 15px;
+
+    border-radius:18px;
+
+    background:#805236;
+
+    color:#fff4e8;
+
+    font-family:Georgia,serif;
+
+    font-size:11px;
+
+    box-shadow:0 3px 8px rgba(0,0,0,.2);
+
+    transition:.15s;
+}
+
+button:active{
+    transform:scale(.92);
+}
+
+@media(max-height:550px){
+
+    .book{
+        width:42vw;
+        height:56vw;
+
+        max-width:180px;
+        max-height:240px;
+    }
+
+    .paragraph{
+        top:10px;
+        left:6px;
+        right:6px;
+        bottom:17px;
+    }
+
+    .paragraph p{
+        font-size:6.7px;
+        line-height:1.25;
+    }
+
+    .buttons{
+        bottom:35px;
+    }
+
+    button{
+        padding:6px 12px;
+        font-size:10px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="book" id="book">
+
+    <div class="closed-book">
+
+        <div>
+
+            <div class="heart">♥</div>
+
+            <div class="closed-title">
+                The My Love<br>
+                Notebook
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="open-book">
+
+        <div
+            class="page"
+            id="leftPage">
+        </div>
+
+        <div
+            class="page"
+            id="rightPage">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="buttons">
+
+    <button onclick="back()">
+        ← АРТҚА
+    </button>
+
+    <button onclick="next()">
+        АЛҒА →
+    </button>
+
+</div>
+
+
+<script>
+
+/* ===============================
+   МӘТІН
+================================ */
+
+const text = `
+Ол мені бүгін блокқа тықты мен дым істей алмадым барлық аккаунттарыммен жаздым бірақта барлығын блокқа тықты мен оны жібергім келмеді әрине мен оны жақсы көрдім я мүмкін интернет желісіндегі махаббат сондай болған соң шығар менің бір қорқатыным осыдан кейін сол қыз екеуміз сөйлеспей қаламызба деген қорқыныш мен оған қалай жақсы көретінімді онсыз өмірім жоқ екенін айттым бірақта мен бәрібірде блокқа тығылдым ендеше мен қазір сіздерге бүгінгі күннің қалай басталғанын айтайын осы 2 3 күннің аралығында ол қыз маған өте қатал әрі суық жауап беріп жүрді жәнеде мен білдім оған бір нәрсе болғанын жәнеде бір кезде ол мені шын атыммен атап бірнәрсе айтқысы келді бірақта мен қорықтым себебі ол маған араласпайық деп айтама деген ойда содан соң ол айтпауды жөн көрген сияқты я әрине мен нақты не айтқысы келгенін білмеймін бірақта оның не айтқысы келгені маған қызық болды.
+
+Мен одан қашан айтасың деп сұрай бердім сұрай бердім мен өте шыдамсыз болдымба немесе оның айтқысы келген сөзді естігім келіп тұрдыма білмедім бірақта сондада маған не айтқысы келгенін білгім келді сосын мен оған өзінің қатал әрі суық жауап беріп жүргенін айттым ал ол болса ештеңе болмады деп жауап қайтарды бірақта мен іштей білдім оның бұлай жауап беруіне бірнәрсе түрткі болғанын себебі ол ешқашанда мұндай болмаған еді.
+
+Сосын ол айтқысы келген сөзді менің бас қатыруды доғаруымды өтінді бірақта мен сондада оның айтқанына құлақ аспадым сосын ол мені Instagram желісінде блокқа тықты содан кейін WhatsApp мессенджерінде жазғанымда ол жерденде блокқа тықты кейін TikTok желісінде мен оған блокқа тықпауын жәнеде айтқысы келген нәрсені айтпай ақ қоюын өтіндім ол маған "блокқа тықпасам не өзгереді" деп жауап қайтардыда мені блокқа тықты.
+
+Мен оны қатты жақсы көргендіктен әліде жібергім келмеді сондықтанда мен басқа аккаунтарым арқылы оған жаздым бірақта ол бәрінде блокқа тықты я мен өзімді қазір жалғыз сезініп көзіме жас алып отырмын мүмкін мен оны жалықтырып жіберген шығармын не болмаса мен оның теңі емес шығармын бірақта ол мен үшін осы кезге дейінгі ең жақын адамдай болды.
+`;
+
+
+/* ===============================
+   МӘТІНДІ СӨЗГЕ БӨЛУ
+================================ */
+
+const words = text
+    .trim()
+    .split(/\s+/);
+
+
+/* ===============================
+   ӘР БЕТТІҢ НЕГІЗГІ КӨЛЕМІ
+
+   Бұрынғыдан АЗАЙТТЫМ,
+   сондықтан 2 жолды келесі бетке
+   шығаруға орын болады.
+================================ */
+
+const PAGE_WORDS = 105;
+
+let pages = [];
+
+for(
+    let i=0;
+    i<words.length;
+    i+=PAGE_WORDS
+){
+
+    pages.push(
+        words
+        .slice(i,i+PAGE_WORDS)
+        .join(" ")
+    );
+}
+
+
+/* ===============================
+   2 ЖОЛДЫ КЕЛЕСІ БЕТКЕ ЖЫЛЖЫТУ
+
+   Бір жол ≈ 7-8 сөз.
+   2 жол ≈ 14-16 сөз.
+
+   Мұнда 22 сөз береміз,
+   сондықтан экранда нақты 2 жолға
+   жетпей қалмайды.
+================================ */
+
+const MOVE = 22;
+
+for(
+    let i=0;
+    i<pages.length-1;
+    i++
+){
+
+    let a =
+        pages[i]
+        .split(/\s+/)
+        .filter(Boolean);
+
+    let moved =
+        a.splice(
+            Math.max(
+                0,
+                a.length-MOVE
+            ),
+            MOVE
+        );
+
+    pages[i] =
+        a.join(" ");
+
+    pages[i+1] =
+        moved.join(" ")
+        +" "
+        +pages[i+1];
+}
+
+
+/* 100 БЕТ */
+
+while(pages.length<100){
+    pages.push("");
+}
+
+pages.length=100;
+
+
+/* ===============================
+   КІТАП КҮЙІ
+================================ */
+
+let state=0;
+
+
+/* ===============================
+   ТИТУЛ
+================================ */
+
+function titlePage(){
+
+    leftPage.innerHTML="";
+
+    rightPage.innerHTML=`
+
+        <div class="date">
+            15.08.2026
+        </div>
+
+        <div class="center-text">
+
+            <div class="book-title">
+                The My Love Notebook
+            </div>
+
+            <div class="description">
+                Бұл кітап айтылмаған сезімге арналған
+            </div>
+
+        </div>
+
+        <div class="author">
+            Авторы: Kioto<br>
+            Арналған: Shuaqqus
+        </div>
+    `;
+}
+
+
+/* ===============================
+   БЕТ ЖАСАУ
+================================ */
+
+function pageHTML(num){
+
+    if(num<1 || num>100){
+        return "";
+    }
+
+    let heading="";
+
+    if(num===1){
+
+        heading=`
+            <h3>
+                1§ — Бұл соңыма?
+            </h3>
+        `;
+    }
+
+    return `
+
+        <div class="paragraph">
+
+            ${heading}
+
+            <p>
+                ${pages[num-1]}
+            </p>
+
+        </div>
+
+        <div class="page-number">
+            ${num}
+        </div>
+    `;
+}
+
+
+/* ===============================
+   БЕТТЕРДІ КӨРСЕТУ
+================================ */
+
+function show(first){
+
+    leftPage.innerHTML=
+        pageHTML(first);
+
+    rightPage.innerHTML=
+        pageHTML(first+1);
+}
+
+
+/* ===============================
+   АНИМАЦИЯ
+================================ */
+
+function animate(){
+
+    leftPage.classList.remove(
+        "flip-left",
+        "flip-right"
+    );
+
+    rightPage.classList.remove(
+        "flip-left",
+        "flip-right"
+    );
+
+    void leftPage.offsetWidth;
+
+    leftPage.classList.add(
+        "flip-left"
+    );
+
+    rightPage.classList.add(
+        "flip-right"
+    );
+
+    setTimeout(()=>{
+
+        leftPage.classList.remove(
+            "flip-left"
+        );
+
+        rightPage.classList.remove(
+            "flip-right"
+        );
+
+    },520);
+}
+
+
+/* ===============================
+   АЛҒА
+================================ */
+
+function next(){
+
+    /* жабық кітап */
+
+    if(state===0){
+
+        book.classList.add("open");
+
+        state=1;
+
+        titlePage();
+
+        return;
+    }
+
+
+    /* титул → 1-2 */
+
+    if(state===1){
+
+        state=2;
+
+        show(1);
+
+        animate();
+
+        return;
+    }
+
+
+    /* келесі бет */
+
+    if(state<51){
+
+        state++;
+
+        let first =
+            (state-2)*2+1;
+
+        show(first);
+
+        animate();
+    }
+}
+
+
+/* ===============================
+   АРТҚА
+================================ */
+
+function back(){
+
+    /* титул → жабық */
+
+    if(state===1){
+
+        book.classList.remove("open");
+
+        state=0;
+
+        return;
+    }
+
+
+    /* 1-2 → титул */
+
+    if(state===2){
+
+        state=1;
+
+        titlePage();
+
+        animate();
+
+        return;
+    }
+
+
+    /* алдыңғы бет */
+
+    if(state>2){
+
+        state--;
+
+        let first =
+            (state-2)*2+1;
+
+        show(first);
+
+        animate();
+    }
+}
+
+</script>
+
+</body>
+</html>
